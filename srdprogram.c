@@ -3,6 +3,14 @@
 #include <windows.h>
 #include <stdio.h>
 #include "srdprogram.h"
+#include "math3d.h"
+
+void init() {
+	Matrix4x4 m1, m2, m3;
+	matrix_makeIdentity(&m1);
+	matrix_makeIdentity(&m2);
+	matrix_multiply(&m1, &m2, &m3);
+}
 
 void render(Renderer* rd) {
 	int* pixels = rd->surface->pixels;

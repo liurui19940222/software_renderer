@@ -140,6 +140,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
+    <ClCompile Include="math3d.c" />
+    <ClCompile Include="math3d.h" />
     <ClCompile Include="renderer.c" />
     <ClCompile Include="srdprogram.c" />
   </ItemGroup>

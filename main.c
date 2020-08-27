@@ -78,6 +78,8 @@ void createDevices(int w, int h)
 	if (!hwnd)
 		return;
 
+	init();
+
 	ShowWindow(hwnd, SW_SHOW);
 	UpdateWindow(hwnd);
 
