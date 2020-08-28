@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="debug.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="math3d.c" />
     <ClCompile Include="math3d.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="srdprogram.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="debug.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="srdprogram.h" />
   </ItemGroup>

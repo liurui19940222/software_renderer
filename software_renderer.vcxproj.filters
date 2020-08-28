@@ -30,12 +30,18 @@
     <ClCompile Include="math3d.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="debug.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="renderer.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="srdprogram.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="debug.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
