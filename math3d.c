@@ -10,6 +10,18 @@ void vector3_makezero(Vector3d* a) {
 	a->x = 0; a->y = 0; a->z = 0;
 }
 
+void vector3_swap(Vector3d* a, Vector3d* b) {
+	float temp = a->x;
+	a->x = b->x;
+	b->x = temp;
+	temp = a->y;
+	a->y = b->y;
+	b->y = temp;
+	temp = a->z;
+	a->z = b->z;
+	b->z = temp;
+}
+
 Vector3d vector3_add(Vector3d a, Vector3d b) {
 	Vector3d v = { a.x + b.x, a.y + b.y, a.z + b.z };
 	return v;
@@ -51,6 +63,13 @@ float vector3_magnitude(Vector3d a) {
 	return sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
 }
 
+void homogeneous2vector3(Vector4d* v4, Vector3d* v3) {
+	float qw = 1.0f / v4->w;
+	v3->x = v4->x * qw;
+	v3->y = v4->y * qw;
+	v3->z = v4->z * qw;
+}
+
 #pragma endregion
 
 #pragma region Matrix
@@ -90,17 +109,23 @@ void matrix_multiplyValue(Matrix4x4* matrix, float value) {
 	}
 }
 
+void matrix_transformPoint(Matrix4x4* matrix, Vector3d point, Vector3d* result) {
+	Vector4d homo;
+	homo.x = matrix->m[0][0] * point.x + matrix->m[0][1] * point.y + matrix->m[0][2] * point.z + matrix->m[0][3];
+	homo.y = matrix->m[1][0] * point.x + matrix->m[1][1] * point.y + matrix->m[1][2] * point.z + matrix->m[1][3];
+	homo.z = matrix->m[2][0] * point.x + matrix->m[2][1] * point.y + matrix->m[2][2] * point.z + matrix->m[2][3];
+	homo.w = matrix->m[3][0] * point.x + matrix->m[3][1] * point.y + matrix->m[3][2] * point.z + matrix->m[3][3];
+	homogeneous2vector3(&homo, result);
+}
+
+void matrix_transformVector(Matrix4x4* matrix, Vector3d vector, Vector3d* result) {
+	result->x = matrix->m[0][0] * vector.x + matrix->m[0][1] * vector.y + matrix->m[0][2] * vector.z;
+	result->y = matrix->m[1][0] * vector.x + matrix->m[1][1] * vector.y + matrix->m[1][2] * vector.z;
+	result->z = matrix->m[2][0] * vector.x + matrix->m[2][1] * vector.y + matrix->m[2][2] * vector.z;
+}
+
 void matrix_multiply(Matrix4x4* a, Matrix4x4* b, Matrix4x4* result) {
-	/*
-		c.m00 = a.m00 x b.m00 + a.m01 x b.m10 + a.m02 x b.m20 + a.m03 x b.m30
-		c.m01 = a.m00 x b.m01 + a.m01 x b.m11 + a.m02 x b.m21 + a.m03 x b.m31
-		c.m02 = a.m00 x b.m02 + a.m01 x b.m12 + a.m02 x b.m22 + a.m03 x b.m32
-
-		c.m10 = a.m10 x b.m00 + a.m11 x b.m10 + a.m12 x b.m20 + a.m13 x b.m30
-		c.m20 = a.m20 x b.m00 + a.m21 x b.m10 + a.m22 x b.m20 + a.m23 x b.m30
-
-		c.mij = a.mi0 x b.m0j + a.mi1 x b.m1j + a.mi2 x b.m2j + a.mi3 x b.m3j
-	*/
+	matrix_makeIdentity(result);
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
 			result->m[i][j] = a->m[i][0] * b->m[0][j] + a->m[i][1] * b->m[1][j] + a->m[i][2] * b->m[2][j] + a->m[i][3] * b->m[3][j];
@@ -204,8 +229,7 @@ void matrix_view(Vector3d eyePos, Vector3d eyeForward, Vector3d eyeUpward, Matri
 	Vector3d negative = { -eyePos.x, -eyePos.y, -eyePos.z };
 	vector3_makeNormalized(&eyeForward);
 	vector3_makeNormalized(&eyeUpward);
-	Vector3d eyeRightward = {0, 0, 0};
-	vector3_cross(eyeUpward, eyeForward, &eyeRightward);
+	Vector3d eyeRightward = vector3_cross(eyeUpward, eyeForward);
 	matrix_makeIdentity(&rotate);
 	rotate.m[0][0] = eyeRightward.x;
 	rotate.m[0][1] = eyeRightward.y;
@@ -220,27 +244,53 @@ void matrix_view(Vector3d eyePos, Vector3d eyeForward, Vector3d eyeUpward, Matri
 	matrix_multiply(&rotate, &translate, result);
 }
 
-void matrix_perspective(float fov, float aspect, float planeNear, float planeFar, Matrix4x4* result) {
-
-}
-
-void matrix_orthographic(float top, float bottom, float left, float right, float front, float back, Matrix4x4* result) {
+void matrix_orthographic(float top, float bottom, float left, float right, float planeNear, float planeFar, Matrix4x4* result) {
 	matrix_makeIdentity(result);
 	float w = right - left;
 	float h = top - bottom;
-	float depth = front - back;
+	float depth = planeFar - planeNear;
 	result->m[0][0] = 2.0f / w;
 	result->m[1][1] = 2.0f / h;
 	result->m[2][2] = 1.0f / depth;
 	result->m[0][3] = -(left + right) / w;
 	result->m[1][3] = -(top + bottom) / h;
-	result->m[2][3] = -back / depth;
+	result->m[2][3] = -planeNear / depth;
+}
+
+void matrix_ortho2d(float size, float aspect, float planeNear, float planeFar, Matrix4x4* result) {
+	float halfWidth = size * aspect;
+	float halfHeight = size;
+	matrix_orthographic(halfHeight, -halfHeight, -halfWidth, halfWidth, planeNear, planeFar, result);
+}
+
+void matrix_perspective(float fov, float aspect, float planeNear, float planeFar, Matrix4x4* result) {
+	matrix_makeIdentity(result);
+	float cota = 1.0f / tanf(fov * 0.5f);
+	float depth = planeFar - planeNear;
+	result->m[0][0] = (1.0f / aspect) * cota;
+	result->m[1][1] = cota;
+	result->m[2][2] = planeFar / depth;
+	result->m[2][3] = -planeFar * planeNear / depth;
+	result->m[3][2] = 1.0f;
 }
 
 void matrix_mvp(Matrix4x4* m, Matrix4x4* v, Matrix4x4* p, Matrix4x4* mvp) {
 	Matrix4x4 vp;
 	matrix_multiply(p, v, &vp);
-	matrix_multiply(&vp, m, &mvp);
+	matrix_multiply(&vp, m, mvp);
 }
 
 #pragma endregion
+
+#pragma region Helper
+
+float fdistance(float a, float b) {
+	return a > b ? (a - b) : (b - a);
+}
+
+void transform_viewport(Vector3d ndcCoordination, float screenHalfWidth, float screenHalfHeight, Vector3d* result) {
+	result->x = ndcCoordination.x * screenHalfWidth + screenHalfWidth;
+	result->y = ndcCoordination.y * screenHalfHeight + screenHalfHeight;
+}
+
+#pragma endregion 

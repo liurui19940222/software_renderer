@@ -63,10 +63,13 @@ void createDevices(int w, int h)
 	int x = (GetSystemMetrics(0) - w) >> 1;
 	int y = (GetSystemMetrics(1) - h) >> 1;
 
+	DWORD dwStyle = WS_OVERLAPPEDWINDOW;
+	AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, 0, 0);
+
 	hwnd = CreateWindowEx(NULL,
 		ClS_NAME,
 		WND_NAME,
-		WS_OVERLAPPEDWINDOW,
+		dwStyle,
 		x, y,
 		windowRect.right - windowRect.left,
 		windowRect.bottom - windowRect.top,
