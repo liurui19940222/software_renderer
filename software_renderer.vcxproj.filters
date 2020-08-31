@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
+    <ClCompile Include="math3d.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="renderer.c">
@@ -24,17 +24,20 @@
     <ClCompile Include="srdprogram.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="math3d.h">
-      <Filter>头文件</Filter>
-    </ClCompile>
-    <ClCompile Include="math3d.c">
+    <ClCompile Include="debug.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="debug.c">
+    <ClCompile Include="main.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="drawing.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="math3d.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="renderer.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -42,6 +45,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="debug.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="drawing.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -10,6 +10,7 @@ HWND hwnd;
 Renderer* renderer;
 
 LRESULT CALLBACK eventsHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	int width, height;
 	switch (msg)
 	{
 		case WM_CREATE:
@@ -21,7 +22,11 @@ LRESULT CALLBACK eventsHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			PostQuitMessage(0);
 			break;
 		case WM_SIZE:
-
+			height = HIWORD(lParam);
+			width = LOWORD(lParam);
+			if (renderer != NULL) {
+				srd_setSize(renderer, hwnd, width, height);
+			}
 		break;
 		case WM_MOVE:
 
@@ -66,7 +71,7 @@ void createDevices(int w, int h)
 	DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 	AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, 0, 0);
 
-	hwnd = CreateWindowEx(NULL,
+	hwnd = CreateWindowEx(0,
 		ClS_NAME,
 		WND_NAME,
 		dwStyle,

@@ -10,6 +10,11 @@ void vector3_makezero(Vector3d* a) {
 	a->x = 0; a->y = 0; a->z = 0;
 }
 
+Vector3d vector3_negative(Vector3d a) {
+	Vector3d v = { -a.x, -a.y, -a.z };
+	return v;
+}
+
 void vector3_swap(Vector3d* a, Vector3d* b) {
 	float temp = a->x;
 	a->x = b->x;
@@ -83,7 +88,7 @@ void matrix_makeIdentity(Matrix4x4* matrix) {
 }
 
 void matrix_makeTransport(Matrix4x4* matrix) {
-	int temp;
+	float temp;
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
 			temp = matrix->m[i][j];
@@ -226,10 +231,13 @@ void matrix_model(Vector3d pos, Vector3d eulerAngles, Vector3d scale, Matrix4x4*
 
 void matrix_view(Vector3d eyePos, Vector3d eyeForward, Vector3d eyeUpward, Matrix4x4* result) {
 	Matrix4x4 translate, rotate;
-	Vector3d negative = { -eyePos.x, -eyePos.y, -eyePos.z };
+	eyePos = vector3_negative(eyePos);
 	vector3_makeNormalized(&eyeForward);
 	vector3_makeNormalized(&eyeUpward);
 	Vector3d eyeRightward = vector3_cross(eyeUpward, eyeForward);
+	vector3_makeNormalized(&eyeRightward);
+	eyeUpward = vector3_cross(vector3_negative(eyeRightward), eyeForward);
+	vector3_makeNormalized(&eyeUpward);
 	matrix_makeIdentity(&rotate);
 	rotate.m[0][0] = eyeRightward.x;
 	rotate.m[0][1] = eyeRightward.y;
@@ -240,7 +248,7 @@ void matrix_view(Vector3d eyePos, Vector3d eyeForward, Vector3d eyeUpward, Matri
 	rotate.m[2][0] = eyeForward.x;
 	rotate.m[2][1] = eyeForward.y;
 	rotate.m[2][2] = eyeForward.z;
-	matrix_translate(negative, &translate);
+	matrix_translate(eyePos, &translate);
 	matrix_multiply(&rotate, &translate, result);
 }
 
@@ -275,6 +283,7 @@ void matrix_perspective(float fov, float aspect, float planeNear, float planeFar
 }
 
 void matrix_mvp(Matrix4x4* m, Matrix4x4* v, Matrix4x4* p, Matrix4x4* mvp) {
+	matrix_makeIdentity(mvp);
 	Matrix4x4 vp;
 	matrix_multiply(p, v, &vp);
 	matrix_multiply(&vp, m, mvp);

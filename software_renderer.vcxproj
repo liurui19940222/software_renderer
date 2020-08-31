@@ -18,6 +18,22 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="debug.c" />
+    <ClCompile Include="drawing.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="math3d.c" />
+    <ClCompile Include="renderer.c" />
+    <ClCompile Include="srdprogram.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="debug.h" />
+    <ClInclude Include="drawing.h" />
+    <ClInclude Include="geometry.h" />
+    <ClInclude Include="math3d.h" />
+    <ClInclude Include="renderer.h" />
+    <ClInclude Include="srdprogram.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -88,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,19 +155,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="debug.c" />
-    <ClCompile Include="main.c" />
-    <ClCompile Include="math3d.c" />
-    <ClCompile Include="math3d.h" />
-    <ClCompile Include="renderer.c" />
-    <ClCompile Include="srdprogram.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="debug.h" />
-    <ClInclude Include="renderer.h" />
-    <ClInclude Include="srdprogram.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

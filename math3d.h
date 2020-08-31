@@ -1,5 +1,15 @@
 #pragma once
 
+typedef struct S_Vector2d {
+	union {
+		float m[2];
+		struct {
+			float x, y;
+		};
+	};
+} Vector2d;
+
+
 typedef struct S_Vector3d {
 	union {
 		float m[3];
@@ -27,6 +37,8 @@ typedef struct S_Matrix4x4
 #pragma region Vector3d
 
 void vector3_makezero(Vector3d* a);
+
+Vector3d vector3_negative(Vector3d a);
 
 void vector3_swap(Vector3d* a, Vector3d* b);
 
