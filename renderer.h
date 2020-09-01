@@ -12,9 +12,9 @@
 #define _SET_HORIZONTAL_LINE(pixels, x0, x1, y, width, height, color) { \
 	if (x0 < 0) x0 = 0; \
 	if (x0 >= width) x0 = width - 1; \
-	if (y < 0) y = 0; \
-	if (y >= height) y = height - 1; \
-	memset(pixels + (y + 0.5f)) * width + (int)(x0 + 0.5f), color, (x1 - x0) * sizeof(int)); \
+	for (int x = x0; x <= x1; ++x) { \
+		pixels[(height - y) * width + x] = color; \
+	}\
 }
 
 typedef struct S_Vertex {
@@ -37,6 +37,7 @@ typedef struct S_Surface
 
 typedef struct S_RenderingContext {
 	Matrix4x4 mvp;
+	BOOL wireMode;
 } RenderingContext;
 
 typedef struct S_Renderer

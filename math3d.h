@@ -1,5 +1,10 @@
 #pragma once
 
+#define _PI_ 3.1415926535f
+#define _DEG_2_RAD_ (_PI_ / 180.0f)
+#define _RAD_2_DEG_ (180.0f / _PI_)
+#define _Round_F_(fvalue) (int)(fvalue + 0.5f)
+
 typedef struct S_Vector2d {
 	union {
 		float m[2];
@@ -18,6 +23,11 @@ typedef struct S_Vector3d {
 		};
 	};
 } Vector3d;
+
+
+const Vector3d vector3_one;
+const Vector3d vector3_up;
+const Vector3d vector3_down;
 
 typedef struct S_Vector4d {
 	union {

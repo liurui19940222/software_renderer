@@ -6,6 +6,10 @@
 
 #pragma region Vector3d
 
+const Vector3d vector3_one = { 1.0f, 1.0f, 1.0f };
+const Vector3d vector3_up = { 0.0f, 1.0f, 0.0f };
+const Vector3d vector3_down = { 0.0f, -1.0f, 0.0f };
+
 void vector3_makezero(Vector3d* a) {
 	a->x = 0; a->y = 0; a->z = 0;
 }
@@ -146,8 +150,9 @@ void matrix_translate(Vector3d pos, Matrix4x4* result) {
 }
 
 void matrix_rotateX(float x, Matrix4x4* result) {
-	float sinx = sinf(x);
-	float cosx = cosf(x);
+	float theta = x * _DEG_2_RAD_;
+	float sinx = sinf(theta);
+	float cosx = cosf(theta);
 	matrix_makeIdentity(result);
 	result->m[1][1] = cosx;
 	result->m[1][2] = -sinx;
@@ -156,8 +161,9 @@ void matrix_rotateX(float x, Matrix4x4* result) {
 }
 
 void matrix_rotateY(float y, Matrix4x4* result) {
-	float siny = sinf(y);
-	float cosy = cosf(y);
+	float theta = y * _DEG_2_RAD_;
+	float siny = sinf(theta);
+	float cosy = cosf(theta);
 	matrix_makeIdentity(result);
 	result->m[0][0] = cosy;
 	result->m[0][2] = siny;
@@ -166,8 +172,9 @@ void matrix_rotateY(float y, Matrix4x4* result) {
 }
 
 void matrix_rotateZ(float z, Matrix4x4* result) {
-	float sinz = sinf(z);
-	float cosz = cosf(z);
+	float theta = z * _DEG_2_RAD_;
+	float sinz = sinf(theta);
+	float cosz = cosf(theta);
 	matrix_makeIdentity(result);
 	result->m[0][0] = cosz;
 	result->m[0][1] = -sinz;
@@ -176,13 +183,16 @@ void matrix_rotateZ(float z, Matrix4x4* result) {
 }
 
 void matrix_rotate(Vector3d eulerAngles, Matrix4x4* result) {
+	float thetax = eulerAngles.x * _DEG_2_RAD_;
+	float thetay = eulerAngles.y * _DEG_2_RAD_;
+	float thetaz = eulerAngles.z * _DEG_2_RAD_;
+	float sinx = sinf(thetax);
+	float cosx = cosf(thetax);
+	float siny = sinf(thetay);
+	float cosy = cosf(thetay);
+	float sinz = sinf(thetaz);
+	float cosz = cosf(thetaz);
 	matrix_makeIdentity(result);
-	float sinx = sinf(eulerAngles.x);
-	float cosx = cosf(eulerAngles.x);
-	float siny = sinf(eulerAngles.y);
-	float cosy = cosf(eulerAngles.y);
-	float sinz = sinf(eulerAngles.z);
-	float cosz = cosf(eulerAngles.z);
 	// z->x->y
 	result->m[0][0] = cosy * cosz - sinx * siny * sinz;
 	result->m[0][1] = -sinz * cosx;

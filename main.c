@@ -1,7 +1,10 @@
+#define _WIN_MAIN_
+
 #include <windowsx.h>
 #include <windows.h>
 #include "renderer.h"
 #include "srdprogram.h"
+#include "input.h"
 
 #define ClS_NAME L"SFRD"
 #define WND_NAME L"SFRD_WND"
@@ -13,26 +16,22 @@ LRESULT CALLBACK eventsHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 	int width, height;
 	switch (msg)
 	{
-		case WM_CREATE:
-
+	case WM_CLOSE:
+		PostQuitMessage(0);
 		break;
-		case WM_DESTROY:
-		case WM_QUIT:
-		case WM_CLOSE:
-			PostQuitMessage(0);
-			break;
-		case WM_SIZE:
-			height = HIWORD(lParam);
-			width = LOWORD(lParam);
-			if (renderer != NULL) {
-				srd_setSize(renderer, hwnd, width, height);
-			}
+	case WM_SIZE:
+		height = HIWORD(lParam);
+		width = LOWORD(lParam);
+		if (renderer != NULL) {
+			srd_setSize(renderer, hwnd, width, height);
+		}
 		break;
-		case WM_MOVE:
-
-			break;
-		default:
-			break;
+	case WM_KEYDOWN:
+		input_setKeyDown(wParam);
+		break;
+	case WM_KEYUP:
+		input_setKeyUp(wParam);
+		break;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
@@ -115,6 +114,19 @@ void dispatch()
 	}
 }
 
+
+#ifdef _WIN_MAIN_
+
+int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) 
+{
+	input_init();
+	createDevices(800, 600);
+	dispatch();
+	return 0;
+}
+
+#elif
+
 int main(void)
 {
 	createDevices(800, 600);
@@ -122,3 +134,4 @@ int main(void)
 	return 0;
 }
 
+#endif

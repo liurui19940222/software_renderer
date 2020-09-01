@@ -54,6 +54,7 @@ Surface* createSurface(HWND hwnd, int width, int height) {
 Renderer* srd_init(HWND hwnd, int width, int height) {
 	Renderer* rd = (Renderer*)malloc(sizeof(Renderer));
 	rd->context = (RenderingContext*)malloc(sizeof(RenderingContext));
+	memset(rd->context, 0, sizeof(RenderingContext));
 	rd->surface = NULL;
 	srd_setSize(rd, hwnd, width, height);
 	return rd;
@@ -107,21 +108,15 @@ void srd_drawTriangle(Renderer* rd, Vertex* vertices) {
 		transform_viewport(position[i], surface->halfWidth, surface->halfHeight, &(position[i]));
 	}
 
-	// sort vertices by pos.y
-	if (position[0].y > position[1].y) {
-		vector3_swap(&(position[0]), &(position[1]));
+	if (context->wireMode) {
+		for (int i = 0; i < 3; ++i) {
+			Vector3d p0 = position[i];
+			Vector3d p1 = position[(i + 1) % 3];
+			drawing_drawline(surface->pixels, surface->width, surface->height, p0, p1, 0xFF0000);
+		}
 	}
-	if (position[1].y > position[2].y) {
-		vector3_swap(&(position[1]), &(position[2]));
-	}
-	if (position[0].y > position[1].y) {
-		vector3_swap(&(position[0]), &(position[1]));
-	}
-
-	for (int i = 0; i < 3; ++i) {
-		Vector3d p0 = position[i];
-		Vector3d p1 = position[(i + 1) % 3];
-		drawing_drawline(surface->pixels, surface->width, surface->height, p0, p1, 0xFF0000);
+	else {
+		drawing_drawTriangle(surface->pixels, surface->width, surface->height, position, NULL);
 	}
 }
 
