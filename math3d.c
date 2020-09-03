@@ -301,6 +301,30 @@ void matrix_mvp(Matrix4x4* m, Matrix4x4* v, Matrix4x4* p, Matrix4x4* mvp) {
 
 #pragma endregion
 
+#pragma region Color
+
+int color_toInteger(Color color) {
+	int a = (int)(color.a * 255.0f);
+	int r = (int)(color.r * 255.0f);
+	int g = (int)(color.g * 255.0f);
+	int b = (int)(color.b * 255.0f);
+	return (a << 24) | ((r << 16) & 0xFF0000) | ((g << 8) & 0xFF00) | (b & 0xFF);
+}
+
+#define _REC_255_ 0.0039216f
+
+Color color_fromInteger(int icolor) {
+	Color color = {
+		(icolor >> 24) * _REC_255_,
+		((icolor >> 16) & 0xFF) * _REC_255_,
+		((icolor >> 8) & 0xFF) * _REC_255_,
+		(icolor & 0xFF) * _REC_255_
+	};
+	return color;
+}
+
+#pragma endregion
+
 #pragma region Helper
 
 float fdistance(float a, float b) {

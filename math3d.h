@@ -44,6 +44,16 @@ typedef struct S_Matrix4x4
 	float m[4][4];
 } Matrix4x4;
 
+typedef struct S_Color
+{
+	union {
+		float m[4];
+		struct {
+			float a, r, g, b;
+		};
+	};
+} Color;
+
 #pragma region Vector3d
 
 void vector3_makezero(Vector3d* a);
@@ -113,6 +123,15 @@ void matrix_ortho2d(float size, float aspect, float planeNear, float planeFar, M
 void matrix_mvp(Matrix4x4* m, Matrix4x4* v, Matrix4x4* p, Matrix4x4* mvp);
 
 #pragma endregion
+
+#pragma region Color
+
+int color_toInteger(Color color);
+
+Color color_fromInteger(int icolor);
+
+#pragma endregion
+
 
 #pragma region Helper
 

@@ -23,7 +23,7 @@ void drawing_drawline(void* vpixels, int width, int height, Vector3d p0, Vector3
 	}
 }
 
-void drawTriangleFlatTop(void* vpixels, int width, int height, Vector3d* positions, Vector4d* colors) {
+void drawTriangleFlatTop(void* vpixels, int width, int height, Vector3d* positions, Color* colors) {
 	int* pixels = (int*)vpixels;
 	float m0 = (positions[2].y - positions[0].y) / (positions[2].x - positions[0].x);
 	float m1 = (positions[2].y - positions[1].y) / (positions[2].x - positions[1].x);
@@ -31,11 +31,11 @@ void drawTriangleFlatTop(void* vpixels, int width, int height, Vector3d* positio
 	for (int y = start; y >= end; --y) {
 		x0 = _Round_F_((y - positions[0].y) / m0 + positions[0].x);
 		x1 = _Round_F_((y - positions[1].y) / m1 + positions[1].x);
-		_SET_HORIZONTAL_LINE(pixels, x1, x0, y, width, height, 0xFF0000);
+		_SET_HORIZONTAL_LINE(pixels, x1, x0, y, width, height, color_toInteger(colors[0]));
 	}
 }
 
-void drawTriangleFlatBottom(void* vpixels, int width, int height, Vector3d* positions, Vector4d* colors) {
+void drawTriangleFlatBottom(void* vpixels, int width, int height, Vector3d* positions, Color* colors) {
 	int* pixels = (int*)vpixels;
 	float m0 = (positions[2].y - positions[0].y) / (positions[2].x - positions[0].x);
 	float m1 = (positions[2].y - positions[1].y) / (positions[2].x - positions[1].x);
@@ -43,11 +43,11 @@ void drawTriangleFlatBottom(void* vpixels, int width, int height, Vector3d* posi
 	for (int y = start + 1; y <= end; ++y) {
 		x0 = _Round_F_((y - positions[0].y) / m0 + positions[0].x);
 		x1 = _Round_F_((y - positions[1].y) / m1 + positions[1].x);
-		_SET_HORIZONTAL_LINE(pixels, x0, x1, y, width, height, 0x00FF00);
+		_SET_HORIZONTAL_LINE(pixels, x0, x1, y, width, height, color_toInteger(colors[0]));
 	}
 }
 
-void drawing_drawTriangle(void* pixels, int width, int height, Vector3d* positions, Vector4d* colors) {
+void drawing_drawTriangle(void* pixels, int width, int height, Vector3d* positions, Color* colors) {
 	Vector3d newPosition[3];
 
 	// sort vertices by pos.y on the Y Axis.

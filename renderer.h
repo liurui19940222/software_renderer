@@ -21,7 +21,7 @@ typedef struct S_Vertex {
 	Vector3d position;
 	Vector3d normal;
 	Vector2d uv;
-	Vector4d color;
+	Color color;
 } Vertex;
 
 typedef struct S_Surface
@@ -33,6 +33,7 @@ typedef struct S_Surface
 	HBITMAP bitmap;
 	HBITMAP backBitmap;
 	void* pixels;
+	float* depthBuffer;
 } Surface;
 
 typedef struct S_RenderingContext {

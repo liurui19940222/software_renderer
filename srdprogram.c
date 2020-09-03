@@ -12,22 +12,20 @@ int triangleSize = sizeof(Vertex) * 3;
 int triCount;
 
 void init() {
-	mesh = triangle;
-	triCount = sizeof(triangle) / triangleSize;
+	mesh = cube;
+	triCount = sizeof(cube) / triangleSize;
 }
 
-float angleX = 0;
-float angleY = 0;
-float angleZ = 0;
+Vector3d euler = { 0, 0, 0 };
 
 void render(Renderer* rd) {
 	float halfW = rd->surface->width * 0.5f, halfH = rd->surface->height * 0.5f;
 	float aspect = halfW / halfH;
-	angleX += 0.16f;
-	angleY += 0.16f;
-	angleZ += 0.16f;
+	euler.x += 0.16f;
+	euler.y += 0.16f;
+	euler.z += 0.16f;
 	
-	//if (input_isKeyPressed('A')) {
+	//if (input_isKeyPressed('A')) {z
 	//	angle += 0.16;
 	//}
 	//if (input_isKeyPressed('D')) {
@@ -38,7 +36,7 @@ void render(Renderer* rd) {
 	Vector3d eyeForward = { 0.0f, -0.5f, 1.0f };
 	Vector3d eyeUpward = { 0.0f, 1.0f, 0.0f };
 	Matrix4x4 m, v, p;
-	matrix_rotateXYZ(angleX, angleY, angleZ, &m);
+	matrix_rotate(euler, &m);
 	matrix_view(eyePos, eyeForward, eyeUpward, &v);
 	matrix_perspective(45, aspect, 0.0f, 100.0f, &p);
 	//matrix_ortho2d(1.0f, aspect, 1.0f, 0.1f, &p);

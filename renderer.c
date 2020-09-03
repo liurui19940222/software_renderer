@@ -16,11 +16,17 @@ void releaseSurface(Surface* surface) {
 	SelectObject(surface->hdc, surface->bitmap);
 	DeleteObject(surface->bitmap);
 	DeleteDC(surface->hdc);
+	if (surface->depthBuffer != NULL) {
+		free(surface->depthBuffer);
+	}
 	free(surface);
 }
 
 void clearSurface(Surface* surface) {
 	memset(surface->pixels, 0, surface->width * surface->height * sizeof(int));
+	if (surface->depthBuffer) {
+		memset(surface->depthBuffer, 0, surface->width * surface->height * sizeof(float));
+	}
 }
 
 void blitSurfaceToScreen(Surface* surface) {
@@ -47,6 +53,7 @@ Surface* createSurface(HWND hwnd, int width, int height) {
 	bmphdr.biBitCount = 32;
 	surface->bitmap = CreateDIBSection(NULL, (PBITMAPINFO)&bmphdr, DIB_RGB_COLORS, &(surface->pixels), NULL, 0);
 	surface->backBitmap = (HBITMAP)SelectObject(surface->hdc, surface->bitmap);
+	surface->depthBuffer = (float*)malloc(width * height * sizeof(float));
 	SetBkMode(surface->hdc, TRANSPARENT);
 	return surface;
 }
@@ -102,6 +109,7 @@ void srd_drawTriangle(Renderer* rd, Vertex* vertices) {
 	Surface* surface = rd->surface;
 	RenderingContext* context = rd->context;
 	Vector3d position[3];
+	Color colors[3] = { vertices[0].color, vertices[1].color, vertices[2].color };
 	
 	for (int i = 0; i < 3; ++i){
 		matrix_transformPoint(&context->mvp, vertices[i].position, &(position[i]));
@@ -112,11 +120,11 @@ void srd_drawTriangle(Renderer* rd, Vertex* vertices) {
 		for (int i = 0; i < 3; ++i) {
 			Vector3d p0 = position[i];
 			Vector3d p1 = position[(i + 1) % 3];
-			drawing_drawline(surface->pixels, surface->width, surface->height, p0, p1, 0xFF0000);
+			drawing_drawline(surface->pixels, surface->width, surface->height, p0, p1, color_toInteger((colors[0])));
 		}
 	}
 	else {
-		drawing_drawTriangle(surface->pixels, surface->width, surface->height, position, NULL);
+		drawing_drawTriangle(surface->pixels, surface->width, surface->height, position, colors);
 	}
 }
 
