@@ -50,6 +50,10 @@ Vector3d vector3_cross(Vector3d a, Vector3d b) {
 	return v;
 }
 
+float vector3_cross2d(Vector3d a, Vector3d b) {
+	return a.x * b.y - a.y * b.x;
+}
+
 Vector3d vector3_multiply(Vector3d a, float s) {
 	Vector3d v = { a.x * s, a.y * s, a.z * s };
 	return v;
@@ -326,6 +330,20 @@ Color color_fromInteger(int icolor) {
 #pragma endregion
 
 #pragma region Helper
+
+float crossProduct2d(float x0, float y0, float x1, float y1) {
+	return x0 * y1 - y0 * x1;
+}
+
+void computeMassCoordinate(Vector3d* triangle, Vector3d coord, float* i, float* j, float* k) {
+	Vector3d edge0 = vector3_minus(triangle[1], triangle[0]);
+	Vector3d edge1 = vector3_minus(triangle[2], triangle[1]);
+	Vector3d edge2 = vector3_minus(triangle[0], triangle[2]);
+	float rec_area_x_2 = 1.0f / vector3_cross2d(edge0, edge1);
+	*i = vector3_cross2d(vector3_minus(triangle[1], coord), edge1) * rec_area_x_2;
+	*j = vector3_cross2d(vector3_minus(triangle[2], coord), edge2) * rec_area_x_2;
+	*k = 1 - *i - *j;
+}
 
 float fdistance(float a, float b) {
 	return a > b ? (a - b) : (b - a);

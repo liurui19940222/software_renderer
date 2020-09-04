@@ -2,6 +2,6 @@
 
 #include "renderer.h"
 
-void init();
+void program_init();
 
-void render(Renderer* rd);
+void program_render(Renderer* rd);

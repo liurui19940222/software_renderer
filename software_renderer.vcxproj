@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debug.c" />
-    <ClCompile Include="drawing.c" />
+    <ClCompile Include="pipeline.c" />
     <ClCompile Include="input.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="math3d.c" />
@@ -29,7 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug.h" />
-    <ClInclude Include="drawing.h" />
+    <ClInclude Include="pipeline.h" />
     <ClInclude Include="geometry.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="math3d.h" />

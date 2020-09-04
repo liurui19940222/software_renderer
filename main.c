@@ -16,6 +16,9 @@ LRESULT CALLBACK eventsHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 	int width, height;
 	switch (msg)
 	{
+	case WM_CREATE:
+
+		break;
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		break;
@@ -23,7 +26,7 @@ LRESULT CALLBACK eventsHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		height = HIWORD(lParam);
 		width = LOWORD(lParam);
 		if (renderer != NULL) {
-			srd_setSize(renderer, hwnd, width, height);
+			//srd_setSize(renderer, hwnd, width, height);
 		}
 		break;
 	case WM_KEYDOWN:
@@ -85,12 +88,12 @@ void createDevices(int w, int h)
 	if (!hwnd)
 		return;
 
-	init();
-
 	ShowWindow(hwnd, SW_SHOW);
 	UpdateWindow(hwnd);
 
 	renderer = srd_init(hwnd, w, h);
+	program_init();
+	//srd_enable(renderer->context, SRD_WIRE_MODE);
 }
 
 void dispatch()
@@ -107,9 +110,11 @@ void dispatch()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
 		srd_beginFrame(renderer);
-		render(renderer);
+		program_render(renderer);
 		srd_endFrame(renderer);
+		input_endRecord();
 		Sleep(16);
 	}
 }
@@ -117,7 +122,7 @@ void dispatch()
 
 #ifdef _WIN_MAIN_
 
-int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) 
+int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	input_init();
 	createDevices(800, 600);

@@ -30,10 +30,10 @@
     <ClCompile Include="main.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="drawing.c">
+    <ClCompile Include="input.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="input.c">
+    <ClCompile Include="pipeline.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,10 +53,10 @@
     <ClInclude Include="geometry.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="drawing.h">
+    <ClInclude Include="input.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="input.h">
+    <ClInclude Include="pipeline.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

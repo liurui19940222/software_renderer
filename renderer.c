@@ -3,9 +3,10 @@
 #include <windows.h>
 #include <stdio.h>
 #include <math.h>
+#include <float.h>
 #include "renderer.h"
 #include "math3d.h"
-#include "drawing.h"
+#include "pipeline.h"
 
 #pragma region Helper
 
@@ -16,16 +17,18 @@ void releaseSurface(Surface* surface) {
 	SelectObject(surface->hdc, surface->bitmap);
 	DeleteObject(surface->bitmap);
 	DeleteDC(surface->hdc);
-	if (surface->depthBuffer != NULL) {
-		free(surface->depthBuffer);
+	if (surface->zbuffer != NULL) {
+		free(surface->zbuffer);
 	}
 	free(surface);
 }
 
 void clearSurface(Surface* surface) {
 	memset(surface->pixels, 0, surface->width * surface->height * sizeof(int));
-	if (surface->depthBuffer) {
-		memset(surface->depthBuffer, 0, surface->width * surface->height * sizeof(float));
+	if (surface->zbuffer) {
+		for (int i = 0; i < surface->width * surface->height; ++i) {
+			surface->zbuffer[i] = FLT_MAX;
+		}
 	}
 }
 
@@ -53,7 +56,7 @@ Surface* createSurface(HWND hwnd, int width, int height) {
 	bmphdr.biBitCount = 32;
 	surface->bitmap = CreateDIBSection(NULL, (PBITMAPINFO)&bmphdr, DIB_RGB_COLORS, &(surface->pixels), NULL, 0);
 	surface->backBitmap = (HBITMAP)SelectObject(surface->hdc, surface->bitmap);
-	surface->depthBuffer = (float*)malloc(width * height * sizeof(float));
+	surface->zbuffer = (float*)malloc(width * height * sizeof(float));
 	SetBkMode(surface->hdc, TRANSPARENT);
 	return surface;
 }
@@ -94,40 +97,18 @@ void srd_endFrame(Renderer* rd) {
 	blitSurfaceToScreen(rd->surface);
 }
 
-void srd_drawline(Renderer* rd, Vertex v0, Vertex v1, int color) {
-	Surface* surface = rd->surface;
-	RenderingContext* context = rd->context;
-	Vector3d point0, point1;
-	matrix_transformPoint(&context->mvp, v0.position, &point0);
-	matrix_transformPoint(&context->mvp, v1.position, &point1);
-	transform_viewport(point0, surface->halfWidth, surface->halfHeight, &point0);
-	transform_viewport(point1, surface->halfWidth, surface->halfHeight, &point1);
-	drawing_drawline(surface->pixels, surface->width, surface->height, point0, point1, color);
-}
-
-void srd_drawTriangle(Renderer* rd, Vertex* vertices) {
-	Surface* surface = rd->surface;
-	RenderingContext* context = rd->context;
-	Vector3d position[3];
-	Color colors[3] = { vertices[0].color, vertices[1].color, vertices[2].color };
-	
-	for (int i = 0; i < 3; ++i){
-		matrix_transformPoint(&context->mvp, vertices[i].position, &(position[i]));
-		transform_viewport(position[i], surface->halfWidth, surface->halfHeight, &(position[i]));
-	}
-
-	if (context->wireMode) {
-		for (int i = 0; i < 3; ++i) {
-			Vector3d p0 = position[i];
-			Vector3d p1 = position[(i + 1) % 3];
-			drawing_drawline(surface->pixels, surface->width, surface->height, p0, p1, color_toInteger((colors[0])));
-		}
-	}
-	else {
-		drawing_drawTriangle(surface->pixels, surface->width, surface->height, position, colors);
-	}
-}
-
 void srd_setMVP(RenderingContext* context, Matrix4x4* m, Matrix4x4* v, Matrix4x4* p) {
 	matrix_mvp(m, v, p, &(context->mvp));
+}
+
+void srd_enable(RenderingContext* context, int state) {
+	context->state |= state;
+}
+
+void srd_disable(RenderingContext* context, int state) {
+	context->state = context->state & !state;
+}
+
+BOOL srd_isEnabled(RenderingContext* context, int state) {
+	return (context->state & state) != 0;
 }

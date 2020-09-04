@@ -54,6 +54,8 @@ typedef struct S_Color
 	};
 } Color;
 
+struct Vertex;
+
 #pragma region Vector3d
 
 void vector3_makezero(Vector3d* a);
@@ -69,6 +71,8 @@ Vector3d vector3_minus(Vector3d a, Vector3d b);
 float vector3_dot(Vector3d a, Vector3d b);
 
 Vector3d vector3_cross(Vector3d a, Vector3d b);
+
+float vector3_cross2d(Vector3d a, Vector3d b);
 
 Vector3d vector3_multiply(Vector3d a, float s);
 
@@ -134,6 +138,19 @@ Color color_fromInteger(int icolor);
 
 
 #pragma region Helper
+
+inline float lerp(float a, float b, float t) {
+	return a + t * (b - a);
+}
+
+inline float clamp(float a, float min, float max) {
+	a = a < min ? min : a;
+	return a > max ? max : a;
+}
+
+float crossProduct2d(float x0, float y0, float x1, float y1);
+
+void computeMassCoordinate(Vector3d* triangle, Vector3d coord, float* i, float* j, float* k);
 
 float fdistance(float a, float b);
 
